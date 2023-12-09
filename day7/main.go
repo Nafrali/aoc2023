@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const CARDS = "AKQJT98765432"
+const CARDS = "AKQT98765432J"
 
 type pokerhands []pokerhand
 
@@ -111,6 +111,22 @@ func isPair(cards string) bool {
 }
 
 func getHandValue(cards string) int {
+	if strings.Count(cards, "J") > 0 {
+		lowestValue := 6
+		for _, v := range CARDS {
+			c := string(v)
+			if c == "J" {
+				continue
+			}
+			newCards := strings.ReplaceAll(cards, "J", c)
+			valueNewCards := getHandValue(newCards)
+			if valueNewCards < lowestValue {
+				lowestValue = valueNewCards
+			}
+		}
+		return lowestValue
+	}
+
 	if isFiveOfAKind(cards) {
 		return 0
 	} else if isFourOfAKind(cards) {
